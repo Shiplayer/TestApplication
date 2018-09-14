@@ -18,8 +18,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -75,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable ResponseEntity responseEntity) {
                 if(responseEntity != null && responseEntity.isSuccessful()){
+                    showContent();
                     progressBar.setVisibility(View.GONE);
                     List<Offer> offerList = new ArrayList<>();
                     for(Offer offer : responseEntity.getList())
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     offerAdapter.setOfferList(offerList);
                 } else if(responseEntity != null){
                     showError();
-                    Picasso.get().load(R.drawable.ic_error_black_24dp).fit().centerCrop().into(errorImage);
+                    errorImage.setImageResource(R.drawable.ic_error_black_24dp);
                     errorText.setText(responseEntity.getThrowable().getMessage());
                 }
             }
@@ -93,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_refresh){
+            hiddenError();
             progressBar.setVisibility(View.VISIBLE);
             mViewModel.updateOffers();
             return true;
@@ -105,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    private void showContent(){
+        recyclerView.setVisibility(View.VISIBLE);
+        errorText.setVisibility(View.GONE);
+        errorImage.setVisibility(View.GONE);
     }
 
     private void showError(){

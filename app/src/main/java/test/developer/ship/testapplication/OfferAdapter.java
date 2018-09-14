@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
@@ -52,15 +53,18 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final Offer offer = offerList.get(position);
         holder.title.setText(offer.getName());
+        holder.pbLoadLogo.setVisibility(View.VISIBLE);
         Picasso.get().load(offer.getLogo()).fit().centerCrop().into(holder.imageView, new Callback() {
             @Override
             public void onSuccess() {
-
+                holder.pbLoadLogo.setVisibility(View.GONE);
             }
 
             @Override
             public void onError(Exception e) {
-                Picasso.get().load(R.drawable.ic_error_black_24dp).fit().centerCrop().into(holder.imageView);
+                holder.pbLoadLogo.setVisibility(View.GONE);
+                //Picasso.get().load(R.drawable.ic_error_black_24dp).fit().centerCrop().into(holder.imageView);
+                holder.imageView.setImageResource(R.drawable.ic_error_black_24dp);
                 holder.imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -101,6 +105,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
         private TextView title;
         private TextView description;
         private Button button;
+        private ProgressBar pbLoadLogo;
         public ViewHolder(View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.cardView_item);
@@ -108,6 +113,7 @@ public class OfferAdapter extends RecyclerView.Adapter<OfferAdapter.ViewHolder> 
             title = itemView.findViewById(R.id.tv_title);
             description = itemView.findViewById(R.id.tv_description);
             button = itemView.findViewById(R.id.cv_button);
+            pbLoadLogo = itemView.findViewById(R.id.pb_load_logo);
         }
     }
 }

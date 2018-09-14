@@ -3,14 +3,18 @@ package test.developer.ship.testapplication;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -51,6 +55,26 @@ public class ItemActivity extends AppCompatActivity {
         errorText = findViewById(R.id.tv_error_item);
         content = findViewById(R.id.sv_content);
         errorBrowserLayout = findViewById(R.id.error_browser_layout);
+
+        webView.setWebViewClient(new WebViewClient(){
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if(request != null && request.getUrl() != null){
+                    return false;
+                }
+                return super.shouldOverrideUrlLoading(view, request);
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if(url != null)
+                    return false;
+                else
+                return super.shouldOverrideUrlLoading(view, url);
+            }
+        });
         ActionBar bar = getActionBar();
         if(bar != null){
             bar.setDisplayHomeAsUpEnabled(true);
@@ -148,12 +172,18 @@ public class ItemActivity extends AppCompatActivity {
         if(item.getItemId() == android.R.id.home){
             if(webView.getVisibility() == View.VISIBLE){
                 showContent();
-                return false;
-            } else
-                this.finish();
-            return true;
+                return true;
+            } else {
+                finish();
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
